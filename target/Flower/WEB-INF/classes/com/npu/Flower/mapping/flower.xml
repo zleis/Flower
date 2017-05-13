@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.npu.Flower.dao.FlowerDao">
+	<!-- User 数据库 flo_user -->
+	<resultMap type="com.npu.Flower.beans.User" id="UserResultMap">
+		<result column="wxid" property="wxid" jdbcType="VARCHAR" />
+		<result column="pass" property="pass" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="photo" property="photo" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="mail" property="mail" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="qq" property="qq" jdbcType="VARCHAR" />
+		<result column="birth" property="birth" jdbcType="VARCHAR" />
+		<result column="home_add" property="home_add" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="User_Column_List">
+		uid,wxid,pass,name,phex,mail,phone,qq,birth,home_add
+	</sql>
+	<!-- 花盆数据库， Flower -->
+	<resultMap type="com.npu.Flower.beans.Flower" id="FlowerResultMap">
+		<result column="fid" property="fid" jdbcType="VARCHAR" />
+		<result column="fcode" property="fcode" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="des" property="des" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- 花盆状态数据库， -->
+	<resultMap type="com.npu.Flower.beans.FlowerData" id=""></resultMap>
+	
+	<!-- User 数据表操作 -->
+	<select id="getUserByID" resultType="com.npu.Flower.beans.User"
+		parameterType="java.lang.String">
+		select * from `flo_user` where `wxid` =
+		#{wxid,jdbcType=VARCHAR}
+	</select>
+
+	<update id="updataUserInfo" parameterType="com.npu.Flower.beans.User">
+		update `flo_user`
+		<set>
+			<if test="pass != null">pass = md5(#{pass,jdbcType=VARCHAR}),</if>
+			<if test="name != null">name = #{name,jdbcType=VARCHAR},</if>
+			<if test="mail != null">mail = #{mail,jdbcType=VARCHAR},</if>
+			<if test="qq != null">qq = #{qq,jdbcType=VARCHAR},</if>
+			<if test="birth != null">birth = #{birth,jdbcType=VARCHAR},</if>
+			<if test="home_add != null">home_add = #{home_add,jdbcType=VARCHAR},</if>
+		</set>
+		where uid = #{uid,jdbcType=INTEGER}
+	</update>
+
+	<insert id="insertUser" parameterType="com.npu.Flower.beans.User">
+		insert into `flo_user`
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="wxid != null">wxid,</if>
+			<if test="pass != null">pass,</if>
+			<if test="sex != null">sex,</if>
+			<if test="mail != null">mail,</if>
+			<if test="phone != null">phone,</if>
+			<if test="qq != null">qq,</if>
+			<if test="birth != null">birth,</if>
+			<if test="home_add != null">home_add,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="wxid != null">#{wxid,jdbcType=VARCHAR},</if>
+			<if test="pass != null">md5(#{pass,jdbcType=VARCHAR}),</if>
+			<if test="sex != null">#{sex,jdbcType=VARCHAR},</if>
+			<if test="mail != null">#{mail,jdbcType=VARCHAR},</if>
+			<if test="phone != null">#{phone,jdbcType=VARCHAR},</if>
+			<if test="qq != null">#{qq,jdbcType=VARCHAR},</if>
+			<if test="birth != null">#{birth,jdbcType=VARCHAR},</if>
+			<if test="home_add != null">#{home_add,jdbcType=VARCHAR},</if>
+		</trim>
+	</insert>
+
+
+	<!-- Flower 数据库操作 -->
+	<insert id="insertFlower" parameterType="com.npu.Flower.beans.Flower">
+		insert into `flo_flower` 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="fid != null">fid,</if>
+			<if test="fcode != null">fcode,</if>
+			<if test="name != null">name,</if>
+			<if test="des != null">des,</if>
+		</trim>
+		<trim prefix="values (" suffix =")" suffixOverrides=",">
+		    <if test="fid != null">#{fid,jdbcType=VARCHAR}, </if>
+			<if test="fcode != null">#{fcode,jdbcType=VARCHAR},</if>
+			<if test="name != null">#{name,jdbcType=VARCHAR},</if>
+			<if test="des != null">#{des,jdbcType=VARCHAR},</if>
+		</trim>
+	</insert>
+	
+	<!--  FlowerData 数据库操作 -->
+	<insert id="insertFlowerData" parameterType="com.npu.Flower.beans.FlowerData">
+	    insert into flo_data 
+	    <trim prefix="(" suffix=")" suffixOverrides=",">
+	        fid,create_time,
+	        <if test="ph != null">ph,</if>
+	        <if test="light != null">light,</if>
+	        <if test="temp != null">temp,</if>
+	        <if test="humidity != null">humidity,</if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+	        #{fid, jdbcType=VARCHAR},#{create_time, jdbcType=TIMESTAMP},
+	        <if test="ph != null">#{ph, jdbcType=FLOAT},</if>
+	        <if test="light != null">#{light, jdbcType=FLOAT},</if>
+	        <if test="temp != null">#{temp, jdbcType=FLOAT},</if>
+	        <if test="humidity != null">#{humidity, jdbcType=FLOAT},</if>
+	    </trim>
+	</insert>
+	
+	<select id="getFlowerDataList" resultType="com.npu.Flower.beans.FlowerData">
+	    select * from flo_data where fid = #{fid,jdbcType=VARCHAR} 
+	    and create_time between #{start, jdbcType=TIMESTAMP} and #{end, jdbcType=TIMESTAMP} limit #{limits,jdbcType=INTEGER}
+	</select>
+</mapper>
